@@ -3,6 +3,7 @@ package org.landsreyk.service.impl;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.landsreyk.model.Contact;
 import org.landsreyk.service.ContactsLoader;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -27,7 +29,7 @@ public class ConsoleContactsManager implements CommandLineRunner {
 
     private final ContactsLoader contactsLoader;
     @Value("${app.contacts-save-file}")
-    private String saveFileLocation;
+    private String saveFile;
 
     @PostConstruct
     public void initContacts() throws IOException {
@@ -89,8 +91,10 @@ public class ConsoleContactsManager implements CommandLineRunner {
         System.out.println(isDeleted ? "Контакт удален." : "Контакт не найден.");
     }
 
-    private void saveContacts() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(saveFileLocation))) {
+    private void saveContacts() throws IOException {
+        File file = new File(saveFile);
+        FileUtils.createParentDirectories(file);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (Contact contact : contacts) {
                 StringJoiner joiner = new StringJoiner(";");
                 joiner
@@ -100,8 +104,6 @@ public class ConsoleContactsManager implements CommandLineRunner {
                 writer.write(joiner.toString());
                 writer.newLine();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         System.out.println("\nКонтакты сохранены в файл.");
     }

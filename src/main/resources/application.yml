@@ -11,5 +11,5 @@ spring:
         enabled: true
         encoding: UTF-8
 app:
-  contacts-initialization-file: src/main/resources/default-contacts.txt
+  contacts-init-file: default-contacts.txt
   contacts-save-file: src/main/resources/contacts.txt
