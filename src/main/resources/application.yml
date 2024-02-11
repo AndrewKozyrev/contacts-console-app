@@ -2,6 +2,14 @@ spring:
   profiles:
     active:
       - init
+  main:
+    system-properties:
+      file.encoding: UTF-8
+  web:
+    filter:
+      charset:
+        enabled: true
+        encoding: UTF-8
 app:
   contacts-initialization-file: src/main/resources/default-contacts.txt
   contacts-save-file: src/main/resources/contacts.txt

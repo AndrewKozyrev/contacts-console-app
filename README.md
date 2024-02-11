@@ -21,7 +21,7 @@
 Для запуска через командную строку нужно выполнить команду
 
 ```cmd
-  java -jar contacts.jar
+  java -jar contacts-console-app.jar
 ```
 ## Команды и их описание
 

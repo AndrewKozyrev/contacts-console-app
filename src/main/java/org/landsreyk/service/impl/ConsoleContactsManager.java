@@ -1,10 +1,10 @@
 package org.landsreyk.service.impl;
 
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.landsreyk.model.Contact;
 import org.landsreyk.service.ContactsLoader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -16,25 +16,22 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.StringJoiner;
 
-import static org.landsreyk.service.impl.Runner.MenuAction.*;
+import static org.landsreyk.service.impl.ConsoleContactsManager.MenuAction.*;
 
 @Component
 @Slf4j
-public class Runner implements CommandLineRunner {
+@RequiredArgsConstructor
+public class ConsoleContactsManager implements CommandLineRunner {
     private final Scanner input = new Scanner(System.in);
     private List<Contact> contacts;
-    @Autowired
-    private ContactsLoader contactsLoader;
+
+    private final ContactsLoader contactsLoader;
     @Value("${app.contacts-save-file}")
     private String saveFileLocation;
 
     @PostConstruct
-    public void initContacts() {
-        try {
-            contacts = contactsLoader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void initContacts() throws IOException {
+        contacts = contactsLoader.load();
     }
 
     @Override
@@ -49,8 +46,11 @@ public class Runner implements CommandLineRunner {
                 case ADD_CONTACT -> addContact();
                 case DELETE_CONTACT -> deleteContact();
                 case SAVE_CONTACTS -> saveContacts();
-                case EXIT -> exitApplication();
+                case EXIT -> System.out.println("\nДо свидания!");
                 default -> System.err.printf("Неверный ввод [%s]%n", action);
+            }
+            if (action == EXIT) {
+                break;
             }
         }
     }
@@ -104,11 +104,6 @@ public class Runner implements CommandLineRunner {
             e.printStackTrace();
         }
         System.out.println("\nКонтакты сохранены в файл.");
-    }
-
-    private void exitApplication() {
-        System.out.println("\nДо свидания!");
-        System.exit(1);
     }
 
     private void displayMenu() {
