@@ -1,0 +1,7 @@
+spring:
+  profiles:
+    active:
+      - init
+app:
+  contacts-initialization-file: src/main/resources/default-contacts.txt
+  contacts-save-file: src/main/resources/contacts.txt
