@@ -1,13 +1,15 @@
 package org.landsreyk.service.impl;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.landsreyk.model.Contact;
 import org.landsreyk.service.ContactsLoader;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,12 +19,19 @@ public class ContactsLoaderImpl implements ContactsLoader {
 
     @Override
     public List<Contact> load() throws IOException {
-        ClassLoader appClassLoader = ClassLoader.getSystemClassLoader();
-        InputStream inputStream = appClassLoader.getResourceAsStream(initFile);
         List<Contact> contacts = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
+        File file = new File(initFile);
+        if (!file.exists()) {
+            System.err.printf("""
+                    Файл для инициализации [%s] не существует.
+                    Укажите путь к существующему файлу инициализации в application.yml.
+                    Посмотрите README.md для ознакомления с инструкцией.
+                    %n""", initFile);
+            System.exit(1);
+        }
+        try (FileInputStream fileInputStream = FileUtils.openInputStream(file)) {
+            List<String> lines = IOUtils.readLines(fileInputStream, StandardCharsets.UTF_8);
+            for (String line : lines) {
                 String[] parts = line.split(";");
                 Contact contact = new Contact();
                 contact.setFullName(parts[0].trim());

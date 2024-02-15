@@ -12,16 +12,24 @@
 
 ## Установка
 
-Склонируйте contacts-console-app с помощью Git
+Склонируйте contacts-console-app с помощью Git и перейдите в каталог проекта.
 
 ```cmd
-  git clone https://github.com/AndrewKozyrev/contacts-console-app.git
-  cd contacts-console-app
+    git clone https://github.com/AndrewKozyrev/contacts-console-app.git
+    cd contacts-console-app
 ```
+
+Запустите команду для упаковки проекта в .jar артефакт.
+```cmd 
+    mvn clean package
+``` 
+
+`Установите 17 версию Java для следующей команды, т.к. проект был создан на ней.`
+
 Для запуска через командную строку нужно выполнить команду
 
 ```cmd
-  java -jar contacts-console-app.jar
+    java -jar contacts-console-app.jar
 ```
 ## Команды и их описание
 
@@ -32,6 +40,8 @@
 5. exit: завершаем работу приложения.
 ## Настройки
 
-- Для изменения профиля нужно установить значение `spring.profiles.active`.
-- Когда стоит профиль `init` при запуске приложения контакты считываются из файла, указанного в свойстве `app.contacts-initialization-file` настроек `application.yml`.
+- Следует разместить файл с настройками application.yml около .jar приложения. Если этого не сделать, приложение загрузит файл с настройками по умолчанию.
+- Для изменения профиля нужно установить значение `spring.profiles.active`. По умолчанию стоит профиль `init`.
+- Когда стоит профиль `init` при запуске приложения контакты считываются из файла `app.contacts-init-file`.
+- Свойство настроек `app.contacts-init-file` хранит путь до файла, из которого приложение считывает контакты.
 - Свойство настроек `app.contacts-save-file` хранит путь до файла, куда приложение сохраняет контакты.

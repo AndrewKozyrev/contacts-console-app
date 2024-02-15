@@ -2,6 +2,7 @@ package org.landsreyk.service.impl;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.landsreyk.model.Contact;
@@ -81,7 +82,7 @@ public class ConsoleContactsManager implements CommandLineRunner {
         contact.setPhoneNumber(parts[1].trim());
         contact.setEmail(parts[2].trim());
         contacts.add(contact);
-        System.out.println("Контакт добавлен.");
+        System.out.println("\nКонтакт добавлен.");
     }
 
     private void deleteContact() {
@@ -93,7 +94,15 @@ public class ConsoleContactsManager implements CommandLineRunner {
 
     private void saveContacts() throws IOException {
         File file = new File(saveFile);
-        FileUtils.createParentDirectories(file);
+        try {
+            FileUtils.touch(file);
+        } catch (Exception e) {
+            System.err.printf("""
+                    Файл для сохранения контактов [%s] не может быть создан.
+                    Возможно вы указали недопустимый путь.
+                    """, saveFile);
+            System.exit(2);
+        }
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (Contact contact : contacts) {
                 StringJoiner joiner = new StringJoiner(";");
@@ -118,6 +127,7 @@ public class ConsoleContactsManager implements CommandLineRunner {
                 """);
     }
 
+    @UtilityClass
     final class MenuAction {
         public static final int LIST_CONTACTS = 1;
         public static final int ADD_CONTACT = 2;
